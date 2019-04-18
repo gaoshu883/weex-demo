@@ -2,12 +2,16 @@
     <div class="item-container">
 			<scroller
 			ref="container"
-			:show-scrollbar="false"
-			@scroll="commonScroll">
+			:show-scrollbar="false">
 				<div style="position:relative">
 					<div :style="{height:headerHeight+metaHeight.top+'px'}" ref="hold"></div><!-- 占位 -->
 
-					<div class="topbox"></div>
+					<div class="topbox">
+						<div v-if="show" class="public_align public_direction">
+							<input v-model="defaultName" class="name_input" autofocus=true ref="input"></input>
+							<text style="color:white;" @click="updateName">确定</text>
+						</div>
+					</div>
 					<div class="public_boxlistmm" ref="boxlist">
 						<div class="pers_list">
               <div class="cell" v-for="(num, index) in lists">
@@ -22,10 +26,9 @@
       </scroller>
 
 			<!-- 头部绝对定位 -->
-      <div :style="headerStyle2" ref="headerBar">
-        <!-- 天气 -->
-        <div ref="weather" class="public_srcl public_align public_direction">
-          <text class="public_srcltopy">快快看看这里吧</text>
+      <div :style="[headerStyle2, baseStyle]" ref="headerBar" >
+        <div class="public_srcl public_align public_direction">
+          <text ref="weather" class="public_srcltopy">············</text>
           <div class="public_srcltopy1"></div>
         </div>
       </div>
@@ -35,7 +38,7 @@
 			class="per_top public_direction public_align"
 			ref="imgTop"
 			:style="{top:headerHeight+'px'}"
-			@click="goPersonalInfo">
+			@click="onclick">
 				<div class="per_topl">
 					<image ref="avatar" class="per_toplimg" :src="userInfoModel.avatar" resize="cover"></image>
 				</div>
@@ -93,7 +96,7 @@
           left: 0,
           backgroundColor: "rgba(255, 255, 255, 0)"
         },
-				lists: [1, 2, 3, 4, 5],
+				lists: [1, 2, 3, 4, 5, 6, 7, 8],
 				metaHeight: {            // 当前页面元素几个重要的高度元数据
 					top: 180,              // 用户信息条高度
 					bottom: 264            // 用户信息条下方区域高度
@@ -102,6 +105,9 @@
         userPanelWidth: 0,       // 用户头像和用户昵称总长
         headerHeight: headerStyle(true).height,
         paddingTop: headerStyle(true).paddingTop,
+				baseStyle: headerStyle(),
+				show: false,
+				defaultName: '',
         tempWeatherWidth: 0,
 				gesToken: 0,
 				isSupportsEB: true       	// 是否兼容bindingX
@@ -124,6 +130,19 @@
 			}
 		},
     methods:{
+			updateName () {
+				if (!this.defaultName) {
+					return modal.toast({
+						message: "请输入姓名"
+					});
+				}
+				this.userInfoModel.nickName = this.defaultName;
+				this.$refs.input.blur();
+				this.show = false;
+			},
+			onclick () {
+				this.show = true;
+			},
       getWeatherWidth () {
         return new Promise((resolve) => {
           if (!!this.tempWeatherWidth) {
@@ -166,15 +185,8 @@
 				}
 				let scroller = this.$refs.container;        // scroller容器
 				let imgTop = this.$refs.imgTop;             // 用户信息条
-				let topbox = this.$refs.topbox;
-				let nickname = this.$refs.nickname;
-				let headerBar = this.$refs.headerBar;
-				let {headerBg, weather, bottomLine, msgImage, headerBgMask2} = headerBar.$refs;
+				let weather = this.$refs.weather;
 
-				// 通用表达式
-				let opacityExp = `y>${this.limitDis}?(y-${this.limitDis})/(${this.limitDis2}-${this.limitDis}):0`  // 正向透明度
-				let abOpacityExp = `y>${this.limitDis}?(y-${this.limitDis2})/(${this.limitDis}-${this.limitDis2}):1` // 反向透明度
-				let colorExp = `y>${this.limitDis}?(y-${this.limitDis2})*255/(${this.limitDis}-${this.limitDis2}):255` // 颜色
 				// 宽度
 				let minWidth = this.userPanelWidth*0.5;
 				let varyWidth = `${this.weatherWidth}+y*(${this.userPanelWidth*0.5-this.weatherWidth})/${this.limitDis}`
@@ -184,74 +196,52 @@
 					eventType: 'scroll',
 					anchor: scroller.ref,
 					props: [
-						{
-							element: topbox.ref,
-							property: "height",
-							expression: `y>0?${this.bgHeight}:${this.bgHeight} - y`
-						},
+						// 用户信息条缩放
 						{
 							element:imgTop.ref,
 							property:'transform.scale',
-							expression:'y>140?0.5:(y<0?1:(1-y/280))',
+							expression:{
+								origin: 'y>140?0.5:(y<0?1:(1-y/280))'
+							},
 							config: {
 								transformOrigin: "left center"
 							}
 						},
+						// 用户信息条移动
 						{
 							element:imgTop.ref,
 							property:'transform.translateY',
-							expression:`y>${this.limitDis}?-${this.limitDis}:0-y`
-						},
-						// 导航条背景色
-						{
-							element: headerBg.ref,
-							property: "background-color",
-							expression: `rgba(255,255,255,${opacityExp})`
-						},
-						// 导航条背景
-						{
-							element: headerBgMask2.ref,
-							property: "opacity",
-							expression: abOpacityExp
-						},
-						// 消息中心图标
-						{
-							element: msgImage.ref,
-							property: "opacity",
-							expression: opacityExp
-						},
-						// 底线(貌似变化的有点僵硬)
-						{
-							element: bottomLine.ref,
-							property: "opacity",
-							expression: opacityExp
-						},
-						// 昵称
-						{
-							element: nickname.ref,
-							property: "color",
-							expression: `rgb(${colorExp},${colorExp},${colorExp})`
+							expression:{
+								origin: `y>${this.limitDis}?-${this.limitDis}:0-y`
+							}
 						},
 						// 天气模块位移
 						{
 							element:weather.ref,
 							property:'transform.translateY',
-							expression:'y>0?(0-y):0'
+							expression:{
+								origin: 'y>0?(0-y):0'
+							}
 						},
 						// 天气模块透明度
 						{
 							element: weather.ref,
 							property: "opacity",
-							expression: `1-y/${this.limitDis}`
+							expression: {
+								origin: `1-y/${this.limitDis}`
+							}
 						},
 						// 宽度
 						{
 							element: weather.ref,
 							property: "width",
-							expression: widthExp
+							expression: {
+								origin: widthExp
+							}
 						}
 					]
 				}, (e) => {
+					console.log("看看有没有返回", e)
 				});
 				this.gesToken = bindingResult.token;
 			},
@@ -286,7 +276,7 @@
 			this.userAnimateBindingDestory();
     },
     created () {
-      this.userInfoModel.nickName = "我的姓名是xxx"
+      this.defaultName = this.userInfoModel.nickName = "我的姓名是xxx"
     }
   }
 </script>
@@ -313,10 +303,7 @@
 	.per_topl {
 		width: 120px;
 		height: 120px;
-		border-bottom-right-radius: 100px;
-		border-bottom-left-radius: 100px;
-		border-top-right-radius: 100px;
-		border-top-left-radius: 100px
+		background-color: #008cee;
 	}
 	.per_toplimg {
 		width: 120px;
@@ -330,6 +317,7 @@
 		font-size: 44px;
 		color: #ffffff;
 		margin-left: 20px;
+		background-color: #008cee;
 	}
 	.pers_list {
 		background-color: #ffffff;
@@ -341,7 +329,8 @@
 	}
 	.topbox {
 		height: 264px;
-		justify-content: flex-end;
+		justify-content: center;
+		align-items: center;
 	}
 	.topboxbg {
 		position: absolute;
@@ -379,12 +368,21 @@
 	}
   .public_srcltopy {
 		font-size: 40px;
-		color: #9b9b9b;
-    background-color: pink;
+		height: 100px;
+		line-height: 100px;
+		color: #ffffff;
+    background-color: green;
 	}
   .public_srcltopy1 {
     flex: 1;
     height: 100px;
     background-color: yellow;
   }
+	.name_input {
+		margin-right: 32px;
+		margin-left: 32px;
+		width: 400px;
+		height: 60px;
+		background-color: white;
+	}
 </style>
