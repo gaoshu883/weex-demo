@@ -21999,7 +21999,7 @@ exports.default = {
 		return {
 			userInfoModel: {
 				avatar: "https://placem.at/things?w=250&random=1",
-				nickName: "测试名称"
+				nickName: "我的姓名是xxx"
 			},
 			headerStyle2: {
 				width: "750px",
@@ -22204,7 +22204,8 @@ exports.default = {
 		this.userAnimateBindingDestory();
 	},
 	created: function created() {
-		this.defaultName = this.userInfoModel.nickName = "我的姓名是xxx";
+		this.defaultName = "我的姓名是xxx";
+		this.launchAnimate();
 	}
 };
 
