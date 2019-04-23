@@ -276,8 +276,12 @@
     },
     created () {
 			this.defaultName = "我的姓名是xxx"
-			this.launchAnimate();
-    }
+		},
+		mounted () {
+			setTimeout(() => {
+				this.launchAnimate();
+			}, 20);
+		}
   }
 </script>
 <style scoped>

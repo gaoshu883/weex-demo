@@ -22205,7 +22205,13 @@ exports.default = {
 	},
 	created: function created() {
 		this.defaultName = "我的姓名是xxx";
-		this.launchAnimate();
+	},
+	mounted: function mounted() {
+		var _this4 = this;
+
+		setTimeout(function () {
+			_this4.launchAnimate();
+		}, 20);
 	}
 };
 
