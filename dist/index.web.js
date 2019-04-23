@@ -22214,7 +22214,7 @@ exports.default = {
 
 		setTimeout(function () {
 			_this4.launchAnimate();
-		}, 20);
+		}, 500);
 	}
 };
 
