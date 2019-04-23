@@ -1934,7 +1934,7 @@ exports.default = {
 	data: function data() {
 		return {
 			userInfoModel: {
-				avatar: "https://placem.at/things?w=250&random=1",
+				avatar: "./avatar.jpg",
 				nickName: "我的姓名是xxx"
 			},
 			headerStyle2: {
