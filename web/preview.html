@@ -77,10 +77,10 @@
         $pages.innerHTML = contents;
       }
       var host = window.location.host;
-      createQRCode(`http://${host}/dist/${page || 'index.js'}`, wsport)
+      createQRCode(`https://${host}/weex-demo/dist/${page || 'index.js'}`, wsport)
     })();
   </script>
 </body>
 <!-- Webpack Dev Server reload -->
-<script src="/webpack-dev-server.js"></script>
+<!-- <script src="/webpack-dev-server.js"></script> -->
 </html>
