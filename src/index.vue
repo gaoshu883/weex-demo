@@ -241,7 +241,6 @@
 						}
 					]
 				}, (e) => {
-					console.log("看看有没有返回", e)
 				});
 				this.gesToken = bindingResult.token;
 			},
