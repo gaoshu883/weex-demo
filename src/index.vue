@@ -283,7 +283,7 @@
 		mounted () {
 			setTimeout(() => {
 				this.launchAnimate();
-			}, 20);
+			}, 500);
 		}
   }
 </script>
