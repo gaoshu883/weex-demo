@@ -86,7 +86,7 @@
     data() {
       return {
         userInfoModel: {
-          avatar: "./avatar.jpg",
+          avatar: "https://t1.picb.cc/uploads/2019/04/23/VYKO9c.jpg",
           nickName: "我的姓名是xxx"
         },
         headerStyle2: {
