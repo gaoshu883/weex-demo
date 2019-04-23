@@ -275,9 +275,6 @@
 			this.userAnimateBindingDestory();
     },
     created () {
-			modal.toast({
-				message: "等3秒再滚动页面哦~"
-			})
 			this.defaultName = "我的姓名是xxx"
 		},
 		mounted () {
